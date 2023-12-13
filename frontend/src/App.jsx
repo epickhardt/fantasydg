@@ -40,6 +40,20 @@ function App() {
     })
   }
 
+  const deletePost = (id) => {
+    fetch(`http://localhost:53706/api/messages/${id}`, {
+      method: "DELETE",
+    })
+    .then(res => {
+      if (res.ok) {
+        alert("Deleted post!");
+        load();
+      } else {
+        alert("Something went wrong during deletion!")
+      }
+    })
+  }
+
   return <div>
     <h1>Welcome to BadgerChat Mini!</h1>
     <Form>
@@ -54,6 +68,7 @@ function App() {
       messages.map(m => <Card key={m.id} style={{marginTop: "1rem"}}>
         <h2>{m.title}</h2>
         <p>{m.content}</p>
+        <Button variant="danger" onClick={e=>deletePost(m.id)}>Delete Post</Button>
       </Card>
       )
     }
