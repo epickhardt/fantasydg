@@ -10,10 +10,14 @@ import { applyRateLimiting, applyLooseCORSPolicy, applyBodyParsing, applyLogging
 
 const app = express();
 const port = 53706;
+const tournaments = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
+                        'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC'];
 
-const GET_POST_SQL = 'SELECT * FROM BadgerMessage;'
-const INSERT_POST_SQL = 'INSERT INTO BadgerMessage(title, content, created) VALUES (?, ?, ?) RETURNING id;'
-const DELETE_POST_SQL = "DELETE FROM BadgerMessage WHERE id = ?;"
+const playerCols = ['tournament', 'player1', 'player2', 'player3', 'player4', 'player5', 'score'];
+
+const GET_USER_SQL = 'SELECT * FROM Users WHERE uname = ?;'
+const GET_ALL_USERS_SQL = 'SELECT uname FROM Users;'
+const INSERT_USER_SQL = 'INSERT INTO Users(uname, pword) VALUES (?, ?);'
 
 const FS_DB = process.env['MINI_BADGERCHAT_DB_LOC'] ?? "./db.db";
 const FS_INIT_SQL = "./includes/init.sql";
@@ -21,7 +25,9 @@ const FS_INIT_SQL = "./includes/init.sql";
 const db = await new sqlite3.Database(FS_DB, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
 db.serialize(() => {
     const INIT_SQL = fs.readFileSync(FS_INIT_SQL).toString();
-    INIT_SQL.replaceAll(/\t\r\n/g, ' ').split(';').filter(str => str).forEach((stmt) => db.run(stmt + ';'));
+    INIT_SQL.replaceAll(/\t\r\n/g, ' ').split(';').filter(str => str).forEach((stmt) => {
+        db.run(stmt + ';');
+    });
 });
 
 applyRateLimiting(app);
@@ -35,57 +41,182 @@ app.get('/api/hello-world', (req, res) => {
     })
 })
 
-app.get('/api/messages', (req, res) => {
-    db.prepare(GET_POST_SQL).get().all((err, ret) => {
+app.get('/api/getUsers', (req, res) => {
+    db.prepare(GET_ALL_USERS_SQL).get().all((err, ret) => {
         if (err) {
             res.status(500).send({
-                msg: "Something went wrong!",
+                msg: "Something went wrong",
                 err: err
             });
-        } else {
+        }
+        else { 
             res.status(200).send(ret);
         }
     })
 })
 
-app.post('/api/messages', (req, res) => {
-    const title = req.body.title;
-    const content = req.body.content;
-
-    if (!title || !content) {
-        res.status(400).send({
-            msg: "A post must have a title and content!"
-        })
-    } else {
-        db.prepare(INSERT_POST_SQL).get(title, content, new Date(), (err, ret) => {
-            if (err) {
-                res.status(500).send({
-                    msg: "Something went wrong!",
-                    err: err
-                });
-            } else {
-                res.status(200).send({
-                    msg: "Successfully posted!",
-                    id: ret.id
-                })
-            }
-        })
-    }
-})
-
-app.delete('/api/messages/:messageId', (req, res) => {
-    const messageId = req.params.messageId;
-    console.log(messageId);
-    db.prepare(DELETE_POST_SQL).get(messageId, (err, ret) => {
+app.get('/api/getPicks/:user', (req, res) => {
+    const username = req.params.user;
+    const GET_ALL_PICKS = 'SELECT * FROM ' + username + ';'
+    db.prepare(GET_ALL_PICKS).get().all((err, ret) => {
         if (err) {
             res.status(500).send({
-                msg: "Something went wrong!",
+                msg: "Something went wrong",
                 err: err
             });
-        } else {
-            res.status(200).send({
-                msg: "Successfully deleted post!",
-            })
+        }
+        else {
+            res.status(200).send(ret);
+        }
+    })
+})
+
+app.get('/api/getScores/:user', (req, res) => {
+    const username = req.params.user;
+    const GET_ALL_PICKS = 'SELECT tournament, score FROM ' + username + ';'
+    db.prepare(GET_ALL_PICKS).get().all((err, ret) => {
+        if (err) {
+            res.status(500).send({
+                msg: "Something went wrong",
+                err: err
+            });
+        }
+        else {
+            res.status(200).send(ret);
+        }
+    })
+})
+
+
+
+app.get('/api/getPlayers', (req, res) => {
+    const GET_PLAYERS_SQL = 'SELECT * FROM Players;';
+    db.prepare(GET_PLAYERS_SQL).get().all((err, ret) => {
+        if (err) {
+            res.status(500).send({
+                msg: "Something went wrong",
+                err: err
+            });
+        }
+        else {
+            console.log(ret);
+            res.status(200).send(ret);
+        }
+    })
+})
+
+app.post('/api/submitPicks', (req, res) => {
+    const username = req.body.username;
+    const tourney = req.body.tourney;
+    const pick1 = req.body.pick1;
+    const pick2 = req.body.pick2;
+    const pick3 = req.body.pick3;
+    const pick4 = req.body.pick4;
+    const pick5 = req.body.pick5;
+    const REMOVE_EXISTING_PICKS = 'DELETE FROM ' + username + ' WHERE tournament = "' + tourney + '";';
+    const INSERT_NEW_PICKS = 'INSERT INTO ' + username + '(tournament, player1, player2, player3, player4, player5)' +
+                                ' VALUES ("' + tourney + '", "' + pick1 + '", "' + pick2 + '", "' + pick3 + '", "' + pick4 + '", "' + pick5 + '");';
+    console.log(REMOVE_EXISTING_PICKS);
+    console.log(INSERT_NEW_PICKS);
+    db.serialize(() => {
+        db.prepare(REMOVE_EXISTING_PICKS).get((err, ret) => {
+            if (err) {
+                res.status(500).send({
+                    msg: "Something went wrong",
+                    err: err
+                });
+            }
+        });
+        db.prepare(INSERT_NEW_PICKS).get((err, ret) => {
+            if (err) {
+                res.status(500).send({
+                    msg: "Something went wrong",
+                    err: err
+                });
+            }
+            else {
+                res.status(200).send();
+            }
+        })
+    })
+});
+
+app.post('/api/register', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    let CREATE_USER_TABLE = 'CREATE TABLE ' + username + "( ";
+    playerCols.forEach(col => CREATE_USER_TABLE += col + " TEXT, ");
+    CREATE_USER_TABLE = CREATE_USER_TABLE.slice(0, CREATE_USER_TABLE.length - 2);
+    CREATE_USER_TABLE += " );";
+    db.serialize(() => {
+        db.prepare(GET_USER_SQL).get(username, (err, ret) => {
+            if (err) {
+                res.status(500).send({
+                    msg: "Something went wrong",
+                    err: err
+                });
+            }
+            else {
+                if (ret) {
+                    res.status(409).send({
+                        msg: "Username already taken"
+                    });
+                }
+            }
+        });
+
+        db.prepare(INSERT_USER_SQL).get(username, password, (err, ret) => {
+            if (err) {
+                res.status(500).send({
+                    msg: "Something went wrong",
+                    err: err
+                });
+            }
+            else {
+                // res.status(200).send();
+            }
+        });
+        db.prepare(CREATE_USER_TABLE).get((err, ret) => {
+            if (err) {
+                res.status(500).send({
+                    msg: "Something went wrong",
+                    err: err
+                });
+            }
+
+            else {
+                res.status(200).send();
+            }
+        })
+    })
+});
+
+app.post('/api/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    db.prepare(GET_USER_SQL).get(username, (err, ret) => {
+        if (err) {
+            res.status(500).send({
+                msg: "Something went wrong",
+                err: err
+            });
+        }
+        else {
+            if (!ret) {
+                res.status(401).send({
+                    msg: "Username or password incorrect",
+                    err: err
+                });
+            }
+            else if (ret.uname !== username || ret.pword !== password) {
+                res.status(401).send({
+                    msg: "Username or password incorrect",
+                    err: err
+                });
+            }
+            else {
+                res.status(200).send();
+            }
         }
     });
 });
