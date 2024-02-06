@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import DGLayout from './DGLayout';
 import DGHome from '../content/DGHome';
@@ -20,7 +20,7 @@ function FantasyDGApp() {
   'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC', 'Sample'];
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<DGLayout tourneys={tourneys} />}>
           <Route index element={<DGHome />} />
@@ -38,7 +38,7 @@ function FantasyDGApp() {
           <Route path="*" element={<DGNoMatch />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

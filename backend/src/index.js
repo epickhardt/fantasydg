@@ -5,6 +5,7 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
 import fs from 'fs';
+import crypto from 'crypto';
 
 import { applyRateLimiting, applyLooseCORSPolicy, applyBodyParsing, applyLogging, applyErrorCatching } from './api-middleware.js'
 
@@ -17,7 +18,7 @@ const playerCols = ['tournament', 'player1', 'player2', 'player3', 'player4', 'p
 
 const GET_USER_SQL = 'SELECT * FROM Users WHERE uname = ?;'
 const GET_ALL_USERS_SQL = 'SELECT uname FROM Users;'
-const INSERT_USER_SQL = 'INSERT INTO Users(uname, pword) VALUES (?, ?);'
+const INSERT_USER_SQL = 'INSERT INTO Users(uname, pword, salt) VALUES (?, ?, ?);'
 
 const FS_DB = process.env['MINI_BADGERCHAT_DB_LOC'] ?? "./db.db";
 const FS_INIT_SQL = "./includes/init.sql";
@@ -99,7 +100,6 @@ app.get('/api/getPlayers', (req, res) => {
             });
         }
         else {
-            console.log(ret);
             res.status(200).send(ret);
         }
     })
@@ -144,6 +144,10 @@ app.post('/api/submitPicks', (req, res) => {
 app.post('/api/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = calculateHash(salt, password);
+
     let CREATE_USER_TABLE = 'CREATE TABLE ' + username + "( ";
     playerCols.forEach(col => CREATE_USER_TABLE += col + " TEXT, ");
     CREATE_USER_TABLE = CREATE_USER_TABLE.slice(0, CREATE_USER_TABLE.length - 2);
@@ -165,7 +169,7 @@ app.post('/api/register', (req, res) => {
             }
         });
 
-        db.prepare(INSERT_USER_SQL).get(username, password, (err, ret) => {
+        db.prepare(INSERT_USER_SQL).get(username, hash, salt, (err, ret) => {
             if (err) {
                 res.status(500).send({
                     msg: "Something went wrong",
@@ -208,20 +212,27 @@ app.post('/api/login', (req, res) => {
                     err: err
                 });
             }
-            else if (ret.uname !== username || ret.pword !== password) {
-                res.status(401).send({
-                    msg: "Username or password incorrect",
-                    err: err
-                });
-            }
             else {
-                res.status(200).send();
+                let hash = crypto.createHmac('sha256', ret.salt).update(password).digest('hex');
+                if (ret.uname !== username || ret.pword !== hash) {
+                    res.status(401).send({
+                        msg: "Username or password incorrect",
+                        err: err
+                    });
+                }
+                else {
+                    res.status(200).send();
+                }
             }
         }
     });
 });
 
 applyErrorCatching(app);
+
+function calculateHash(salt, pass) {
+    return crypto.createHmac('sha256', salt).update(pass).digest('hex');
+}
 
 // Open server for business!
 app.listen(port, () => {

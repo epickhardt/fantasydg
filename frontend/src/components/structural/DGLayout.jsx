@@ -141,7 +141,7 @@ function DGLayout(props) {
                             <DGTourneyStartsContext.Provider value={[tourneyStarts, setTourneyStarts]}>
                                 <DGUsersContext.Provider value={[users, setUsers]}>
                                     <DGScoresContext.Provider value={[scores, setScores]}>
-                                        <Outlet />
+                                        <Outlet/>
                                     </DGScoresContext.Provider>
                                 </DGUsersContext.Provider>
                             </DGTourneyStartsContext.Provider>
