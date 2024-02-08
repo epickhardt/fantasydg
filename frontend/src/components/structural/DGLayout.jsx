@@ -62,7 +62,7 @@ function DGLayout(props) {
     }, []);
 
     useEffect(() => {
-        fetch(`https://fantasydg.site/api/getUsers`, {
+        fetch(`https://fantasydg.site:53706/api/getUsers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
