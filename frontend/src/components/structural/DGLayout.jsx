@@ -62,7 +62,9 @@ function DGLayout(props) {
     }, []);
 
     useEffect(() => {
-        fetch(`https://fantasydg.site:53706/api/getUsers`, {
+        let url = process.env.NODE_ENV === 'production' ? 'https://167.71.244.233:53706/api/getUsers' :
+                                                    'http://localhost:53706/api/getUsers'
+        fetch(url, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
