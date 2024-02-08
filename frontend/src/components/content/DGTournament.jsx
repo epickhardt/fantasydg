@@ -16,7 +16,7 @@ export default function DGTournament(props) {
     }, [players]);
 
     useEffect(() => {
-        fetch(`http://167.71.244.233:53706/api/getPlayers`, {
+        fetch(`https://167.71.244.233:53706/api/getPlayers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -43,7 +43,7 @@ export default function DGTournament(props) {
     return <>
         <h1>{props.name}</h1>
         <p>{winning}</p>
-        <a href="https://www.pdga.com/tour/event/75422">Link to Tournament Page</a>
+        <a href="httpss://www.pdga.com/tour/event/75422">Link to Tournament Page</a>
         <br/>
         {
             shownPlayers.map(player => 

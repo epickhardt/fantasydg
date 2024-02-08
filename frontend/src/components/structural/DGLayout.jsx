@@ -44,7 +44,7 @@ function DGLayout(props) {
         })
 
     useEffect(() => {
-        fetch(`http://167.71.244.233:53706/api/getPlayers`, {
+        fetch(`https://167.71.244.233:53706/api/getPlayers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -62,7 +62,7 @@ function DGLayout(props) {
     }, []);
 
     useEffect(() => {
-        fetch(`http://167.71.244.233:53706/api/getUsers`, {
+        fetch(`https://167.71.244.233:53706/api/getUsers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -82,7 +82,7 @@ function DGLayout(props) {
     useEffect(() => {
         let userScores = []
         users.forEach((user)=>{
-            fetch(`http://167.71.244.233:53706/api/getScores/${user}`, {
+            fetch(`https://167.71.244.233:53706/api/getScores/${user}`, {
                 method: 'GET',
                 credentials: "include"
             }).then(res => {
@@ -103,7 +103,7 @@ function DGLayout(props) {
 
     return (
         <div>
-            <Navbar bg="dark" variant="dark">
+            <Navbar expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand as={Link} to="/">
                         <img

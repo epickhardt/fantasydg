@@ -15,7 +15,7 @@ export default function DGLogin() {
             alert("You must provide both a username and a password!")
         }
         else {
-            fetch(`http://167.71.244.233:53706/api/login`, {
+            fetch(`https://167.71.244.233:53706/api/login`, {
                 method: 'POST',
                 credentials: "include",
                 headers: {
