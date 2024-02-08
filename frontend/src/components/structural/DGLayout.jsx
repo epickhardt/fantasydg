@@ -44,7 +44,7 @@ function DGLayout(props) {
         })
 
     useEffect(() => {
-        fetch(`https://167.71.244.233:53706/api/getPlayers`, {
+        fetch(`https://fantasydg.site:53706/api/getPlayers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -62,7 +62,7 @@ function DGLayout(props) {
     }, []);
 
     useEffect(() => {
-        fetch(`https://167.71.244.233:53706/api/getUsers`, {
+        fetch(`https://fantasydg.site/api/getUsers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -82,7 +82,7 @@ function DGLayout(props) {
     useEffect(() => {
         let userScores = []
         users.forEach((user)=>{
-            fetch(`https://167.71.244.233:53706/api/getScores/${user}`, {
+            fetch(`https://fantasydg.site:53706/api/getScores/${user}`, {
                 method: 'GET',
                 credentials: "include"
             }).then(res => {
