@@ -20,7 +20,7 @@ const GET_USER_SQL = 'SELECT * FROM Users WHERE uname = ?;'
 const GET_ALL_USERS_SQL = 'SELECT uname FROM Users;'
 const INSERT_USER_SQL = 'INSERT INTO Users(uname, pword, salt) VALUES (?, ?, ?);'
 
-const FS_DB = process.env['MINI_BADGERCHAT_DB_LOC'] ?? "./db.db";
+const FS_DB = "./db.db";
 const FS_INIT_SQL = "./includes/init.sql";
 
 const db = await new sqlite3.Database(FS_DB, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);

@@ -16,7 +16,7 @@ export default function DGTournament(props) {
     }, [players]);
 
     useEffect(() => {
-        fetch(`http://localhost:53706/api/getPlayers`, {
+        fetch(`http://167.71.244.233:53706/api/getPlayers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {

@@ -44,7 +44,7 @@ function DGLayout(props) {
         })
 
     useEffect(() => {
-        fetch(`http://localhost:53706/api/getPlayers`, {
+        fetch(`http://167.71.244.233:53706/api/getPlayers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -62,7 +62,7 @@ function DGLayout(props) {
     }, []);
 
     useEffect(() => {
-        fetch(`http://localhost:53706/api/getUsers`, {
+        fetch(`http://167.71.244.233:53706/api/getUsers`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -82,7 +82,7 @@ function DGLayout(props) {
     useEffect(() => {
         let userScores = []
         users.forEach((user)=>{
-            fetch(`http://localhost:53706/api/getScores/${user}`, {
+            fetch(`http://167.71.244.233:53706/api/getScores/${user}`, {
                 method: 'GET',
                 credentials: "include"
             }).then(res => {
