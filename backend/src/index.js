@@ -6,6 +6,7 @@ import express from 'express';
 import sqlite3 from 'sqlite3';
 import fs from 'fs';
 import crypto from 'crypto';
+import https from 'https';
 
 import { applyRateLimiting, applyLooseCORSPolicy, applyBodyParsing, applyLogging, applyErrorCatching } from './api-middleware.js'
 
@@ -234,7 +235,13 @@ function calculateHash(salt, pass) {
     return crypto.createHmac('sha256', salt).update(pass).digest('hex');
 }
 
-// Open server for business!
-app.listen(port, () => {
-    console.log(`My API has been opened on :${port}`)
-});
+
+let key = fs.readFileSync('/etc/letsencrypt/live/fantasydg.site/privkey.pem');
+let cert = fs.readFileSync('/etc/letsencrypt/live/fantasydg.site/fullchain.pem');
+
+let options = {
+    key: key,
+    cert: cert
+};
+
+https.createServer(options, app).listen(port, () => console.log('listening on ' + port));
