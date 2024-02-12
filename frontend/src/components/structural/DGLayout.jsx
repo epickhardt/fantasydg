@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 
-import crest from '../../assets/react.svg'
 import DGLoginStatusContext from "../context/DGLoginStatusContext";
 import DGPlayersContext from "../context/DGPlayersContext";
 import DGTourneysContext from "../context/DGTourneysContext";
@@ -40,7 +39,6 @@ function DGLayout(props) {
             'GMC': new Date("September 19, 2024 00:00:00"), 
             'MVP': new Date("September 26, 2024 00:00:00"), 
             'USDGC': new Date("October 10, 2024 00:00:00"), 
-            'Sample': new Date("January 20, 2024 00:00:00")
         })
 
     useEffect(() => {
@@ -104,15 +102,8 @@ function DGLayout(props) {
     return (
         <div>
             <Navbar expand="lg" bg="dark" variant="dark">
-                <Container>
+                <Container className="ms-0">
                     <Navbar.Brand as={Link} to="/">
-                        <img
-                            alt="DGFantasy Logo"
-                            src={crest}
-                            width="30"
-                            height="30"
-                            className="d-inline-block align-top"
-                        />{' '}
                         Fantasy Disc Golf 2024
                     </Navbar.Brand>
                     <Nav className="me-auto">

@@ -20,7 +20,7 @@ function FantasyDGApp() {
   const [pastTourneys, setPastTourneys] = useState([]);
 
   const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
-  'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC', 'Sample'];
+  'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC'];
 
   useEffect(() => {
     let shownTourneys = []
