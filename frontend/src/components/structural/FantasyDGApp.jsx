@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
+
+import DGTourneyStartsContext from '../context/DGTourneyStartsContext';
 
 import DGLayout from './DGLayout';
 import DGHome from '../content/DGHome';
@@ -14,10 +16,24 @@ import DGRules from '../content/DGRules';
 
 function FantasyDGApp() {
 
-
+  const [tourneyStarts, setTourneyStarts] = useContext(DGTourneyStartsContext);
+  const [pastTourneys, setPastTourneys] = useState([]);
 
   const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
   'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC', 'Sample'];
+
+  useEffect(() => {
+    let shownTourneys = []
+    if (tourneyStarts !== undefined) {
+      tourneys.forEach(tourney => {
+        console.log(Date.now())
+        console.log(tourneyStarts[tourney])
+        if (Date.now() > tourneyStarts[tourney]) shownTourneys.push(tourney);
+      })
+      setPastTourneys(shownTourneys);
+    }
+    
+  }, [tourneyStarts])
 
   return (
     <HashRouter>
@@ -31,8 +47,9 @@ function FantasyDGApp() {
           <Route path="/rules" element={<DGRules/>}></Route>
           <Route path="/picks" element={<DGPicks/>}></Route>
           {
-            tourneys.map(tourney => {
-              return <Route key={tourney} path={`tournaments/${tourney}`} element={<DGTournament name={tourney} />} />
+            pastTourneys.map(tourney => {
+                          
+                return <Route key={tourney} path={`tournaments/${tourney}`} element={<DGTournament name={tourney} />} />
             })
           }
           <Route path="*" element={<DGNoMatch />} />
