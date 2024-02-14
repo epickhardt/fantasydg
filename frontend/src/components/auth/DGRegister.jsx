@@ -24,7 +24,7 @@ export default function DGRegister() {
     }
 
     const newUser = () => {
-        fetch(`http://167.71.244.233:53706/api/register/`, {
+        fetch(`https://fantasydg.site:53706/api/register/`, {
             method: 'POST',
             credentials: "include",
             headers: {

@@ -36,7 +36,7 @@ function DGPicks(props) {
 
     const getPrevSelections = () => {
         if (!username) return;
-        fetch(`http://167.71.244.233:53706/api/getPicks/${username}`, {
+        fetch(`https://fantasydg.site:53706/api/getPicks/${username}`, {
             method: 'GET',
             credentials: "include"
         }).then(res => {
@@ -82,7 +82,7 @@ function DGPicks(props) {
             alert("You have already used a player in your selection 3 times!");
             return;
         }
-        fetch(`http://167.71.244.233:53706/api/submitPicks`, {
+        fetch(`https://fantasydg.site:53706/api/submitPicks`, {
             method: 'POST',
             credentials: "include",
             headers: {
