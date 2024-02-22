@@ -115,7 +115,7 @@ function DGPicks(props) {
             <div class="row align-items-start">
                 <div class="col">
                     <h1>Your Picks</h1>
-                    <a href="https://www.pdga.com/tour/event/77775">Chess.com (FLO) PDGA Link</a>
+                    <a target="_blank" href="https://www.pdga.com/tour/event/77775" rel="noreferrer">Chess.com (FLO) PDGA Link</a>
                     <h3>Tournament Select:</h3>
                     <DropdownButton id="dropdown-basic-button" title="Tournament">
                         {
