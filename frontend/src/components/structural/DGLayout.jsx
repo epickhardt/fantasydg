@@ -13,32 +13,33 @@ function DGLayout(props) {
 
     const [loginStatus, setLoginStatus] = useState(sessionStorage.getItem('username') ? true : false)
     const [tournaments, setTournaments] = useState(['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
-    'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC', 'Sample']);
+    'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC']);
     const [players, setPlayers] = useState([]);
     const [users, setUsers] = useState([]);
     const [scores, setScores] = useState([]);
+    const [pastTourneys, setPastTourneys] = useState([]);
     const [tourneyStarts, setTourneyStarts] = useState(
         {
-            'FLO': new Date("February 23, 2024 00:00:00"), 
-            'WACO': new Date("March 7, 2024 00:00:00") ,
-            'AUSTN': new Date("March 15, 2024 00:00:00"), 
-            'TXSTS': new Date("March 29, 2024 00:00:00"), 
-            'JBO': new Date("April 12, 2024 00:00:00"), 
-            'MCO': new Date("April 19, 2024 00:00:00"), 
-            'DDO': new Date("May 3, 2024 00:00:00"), 
-            'OTB': new Date("May 17, 2024 00:00:00"), 
-            'PDXO': new Date("May 30, 2024 00:00:00"), 
-            'BSF': new Date("June 7, 2024 00:00:00"), 
-            'TPC': new Date("June 21, 2024 00:00:00"), 
-            'DMC': new Date("July 5, 2024 00:00:00"), 
-            'EO': new Date("July 18, 2024 00:00:00"),
-            'LSO': new Date("August 1, 2024 00:00:00"), 
-            'IDLE': new Date("August 9, 2024 00:00:00"), 
-            'WORLDS': new Date("August 21, 2024 00:00:00"), 
-            'DGLO': new Date("September 5, 2024 00:00:00"), 
-            'GMC': new Date("September 19, 2024 00:00:00"), 
-            'MVP': new Date("September 26, 2024 00:00:00"), 
-            'USDGC': new Date("October 10, 2024 00:00:00"), 
+            'FLO': new Date("February 23, 2024 06:00:00"), 
+            'WACO': new Date("March 7, 2024 06:00:00") ,
+            'AUSTN': new Date("March 15, 2024 06:00:00"), 
+            'TXSTS': new Date("March 29, 2024 06:00:00"), 
+            'JBO': new Date("April 12, 2024 06:00:00"), 
+            'MCO': new Date("April 19, 2024 06:00:00"), 
+            'DDO': new Date("May 3, 2024 06:00:00"), 
+            'OTB': new Date("May 17, 2024 06:00:00"), 
+            'PDXO': new Date("May 30, 2024 06:00:00"), 
+            'BSF': new Date("June 7, 2024 06:00:00"), 
+            'TPC': new Date("June 21, 2024 06:00:00"), 
+            'DMC': new Date("July 5, 2024 06:00:00"), 
+            'EO': new Date("July 18, 2024 06:00:00"),
+            'LSO': new Date("August 1, 2024 06:00:00"), 
+            'IDLE': new Date("August 9, 2024 06:00:00"), 
+            'WORLDS': new Date("August 21, 2024 06:00:00"), 
+            'DGLO': new Date("September 5, 2024 06:00:00"), 
+            'GMC': new Date("September 19, 2024 06:00:00"), 
+            'MVP': new Date("September 26, 2024 06:00:00"), 
+            'USDGC': new Date("October 10, 2024 06:00:00"), 
         })
 
     useEffect(() => {
@@ -54,7 +55,9 @@ function DGLayout(props) {
             }
         }).then(data => {
             let playerList = [];
+            console.log(data);
             data.forEach(playerObj => playerList.push(playerObj["Name"]));
+            console.log(playerList);
             setPlayers(playerList.sort());
         });
     }, []);
@@ -72,6 +75,7 @@ function DGLayout(props) {
             }
         }).then(data => {
             let newUsers = []
+            console.log(data)
             data.forEach(user => newUsers.push(user['uname']))
             setUsers(newUsers);
         });
@@ -99,6 +103,19 @@ function DGLayout(props) {
         setScores(userScores);
     }, [users])
 
+
+    useEffect(() => {
+        let shownTourneys = []
+        if (tourneyStarts !== undefined) {
+            tournaments.forEach(tourney => {
+                console.log(Date.now())
+                console.log(tourneyStarts[tourney])
+                if (Date.now() > tourneyStarts[tourney]) shownTourneys.push(tourney);
+            })
+            setPastTourneys(shownTourneys);
+        }
+    }, [tourneyStarts])
+
     return (
         <div>
             <Navbar expand="lg" bg="dark" variant="dark">
@@ -113,9 +130,9 @@ function DGLayout(props) {
                         <Nav.Link hidden={loginStatus!=true} as={Link} to="picks">Picks</Nav.Link>
                         <Nav.Link hidden={loginStatus===true} as={Link} to="login">Login</Nav.Link>
                         <Nav.Link hidden={loginStatus===true} as={Link} to="register">Register</Nav.Link>
-                        <NavDropdown title="Tournaments">
+                        <NavDropdown title="Past Tournaments">
                         {
-                            tournaments.map(tourney => {
+                            pastTourneys.map(tourney => {
                                 return <NavDropdown.Item key={tourney} as={Link} to={"tournaments/" + tourney}>{tourney}</NavDropdown.Item>
                             })
                         }
