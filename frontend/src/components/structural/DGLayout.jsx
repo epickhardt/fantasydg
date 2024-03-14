@@ -16,7 +16,8 @@ function DGLayout(props) {
     'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC']);
     const [players, setPlayers] = useState([]);
     const [users, setUsers] = useState([]);
-    const [scores, setScores] = useState([]);
+    const [totals, setTotals] = useState({});
+    const [scores, setScores] = useState({});
     const [pastTourneys, setPastTourneys] = useState([]);
     const [tourneyStarts, setTourneyStarts] = useState(
         {
@@ -55,9 +56,7 @@ function DGLayout(props) {
             }
         }).then(data => {
             let playerList = [];
-            console.log(data);
             data.forEach(playerObj => playerList.push(playerObj["Name"]));
-            console.log(playerList);
             setPlayers(playerList.sort());
         });
     }, []);
@@ -75,14 +74,14 @@ function DGLayout(props) {
             }
         }).then(data => {
             let newUsers = []
-            console.log(data)
             data.forEach(user => newUsers.push(user['uname']))
             setUsers(newUsers);
         });
     }, [])
 
     useEffect(() => {
-        let userScores = []
+        let userScores = {}
+        let sums = {}
         users.forEach((user)=>{
             fetch(`https://fantasydg.site:53706/api/getScores/${user}`, {
                 method: 'GET',
@@ -95,12 +94,19 @@ function DGLayout(props) {
                     alert("Internal Error");
                 }
             }).then(data => {
+                let sum = 0
                 let newUserScores = {}
-                data.forEach(tourney => newUserScores[tourney['tournament']] = tourney['score'])
-                userScores.push(newUserScores);
+                data.forEach(tourney => {
+                    newUserScores[tourney['tournament']] = tourney['score']
+                    sum += tourney['score']
+                })
+                userScores[user] = newUserScores;
+                sums[user] = sum
             })
         })
         setScores(userScores);
+        setTotals(sums);
+        sessionStorage.setItem("totals", JSON.stringify(sums));
     }, [users])
 
 
@@ -108,8 +114,6 @@ function DGLayout(props) {
         let shownTourneys = []
         if (tourneyStarts !== undefined) {
             tournaments.forEach(tourney => {
-                console.log(Date.now())
-                console.log(tourneyStarts[tourney])
                 if (Date.now() > tourneyStarts[tourney]) shownTourneys.push(tourney);
             })
             setPastTourneys(shownTourneys);

@@ -47,15 +47,14 @@ function DGPicks(props) {
                 alert("Internal Error");
             }
         }).then(data => {
-            console.log(data)
             let newSelections = {}
             data.forEach(entry => Object.values(entry).forEach(player => {
+                console.log(player)
                 if (currTourney === player) { setSavedPicks(Object.values(entry).slice(1,6))}
-                if (tourneys.some(tourney => tourney === player) || player === null) {;}
+                if (tourneys.some(tourney => tourney === player) || player === null || !allPlayers.some(aP => aP === player)) {;}
                 else if(!newSelections[player]) newSelections[player] = 1;
                 else newSelections[player] ++;
             }));
-            console.log(newSelections);
             setPrevSelections(newSelections);
             setPickedPlayers(Object.keys(newSelections))
         });
@@ -69,7 +68,6 @@ function DGPicks(props) {
     }
 
     const handleSubmit = (tourney, picks) => {
-        console.log(picks["1"])
         if(!Object.values(picks).every(pick => pick != "")) {
             alert("Must submit 5 players");
             return;
@@ -115,7 +113,7 @@ function DGPicks(props) {
             <div class="row align-items-start">
                 <div class="col">
                     <h1>Your Picks</h1>
-                    <a target="_blank" href="https://www.pdga.com/tour/event/77775" rel="noreferrer">Chess.com (FLO) PDGA Link</a>
+                    <a target="_blank" href="https://www.pdga.com/tour/event/77759" rel="noreferrer">Open @ Austin PDGA Link</a>
                     <h3>Tournament Select:</h3>
                     <DropdownButton id="dropdown-basic-button" title="Tournament">
                         {

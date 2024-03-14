@@ -10,7 +10,11 @@ function DGStandings() {
     const [users, setUsers] = useContext(DGUsersContext);
     const [tournaments, setTournaments] = useContext(DGTourneysContext);
     const [scores, setScores] = useContext(DGScoresContext);
+    const [totals, setTotals] = useState({});
 
+    useEffect(() => {
+        setTotals(JSON.parse(sessionStorage.getItem("totals")));
+    }, [])
     return (
         <div>
             <h1>Standings</h1>
@@ -19,21 +23,29 @@ function DGStandings() {
                     <tr>
                         <th>Tournament</th>
                         {
-                            users.map(user => {
+                            Object.keys(scores).map(user => {
                                 return <th key={user}>{user}</th>
                             })
                         }
                     </tr>
                 </thead>
-                { (scores.length == users.length) ? 
+                { ( Object.keys(scores).length == users.length) ? 
                     <tbody>
+                        <tr>
+                            {
+                                (Object.values(totals).length > 0) ? 
+                                Object.values(totals).map(user => {
+                                    return <td>totals</td>
+                                }) : <></>
+                            }
+                        </tr>
                         {
                             tournaments.map(tournament => {
                                 return <tr key={tournament}>
                                     <td>{tournament}</td>
                                     {
-                                        scores.map(user => {
-                                            if (user[tournament]) return <td>{user[tournament]}</td>
+                                        Object.values(scores).map(user => {
+                                            if (user[tournament]) return <td key={users[Object.values(scores).indexOf(user)] + tournament}>{user[tournament]}</td>
                                             else return <td>0</td>
                                         })
                                     }
