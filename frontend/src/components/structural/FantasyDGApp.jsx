@@ -19,7 +19,7 @@ function FantasyDGApp() {
   const [tourneyStarts, setTourneyStarts] = useContext(DGTourneyStartsContext);
   const [pastTourneys, setPastTourneys] = useState([]);
 
-  const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
+  const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'CHAMP', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
   'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC'];
 
 

@@ -1,3 +1,4 @@
+import argparse
 import sqlite3
 from sqlite3 import Error
 import requests
@@ -6,7 +7,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-def get_data(url='https://www.pdga.com/tour/event/68748'):
+def get_data(url):
 
     page = requests.get(url)
 
@@ -27,21 +28,6 @@ def get_data(url='https://www.pdga.com/tour/event/68748'):
         mydata.loc[length] = row
 
     return mydata
-    # mydata.drop('Place', inplace=True, axis=1)
-    # mydata.drop('Points', inplace=True, axis=1)
-    # mydata.drop('Par', inplace=True, axis=1)
-    # mydata.drop('Rd1', inplace=True, axis=1)
-    # mydata.drop('Rd2', inplace=True, axis=1)
-    # mydata.drop('Rd3', inplace=True, axis=1)
-    # mydata.drop('Rd4', inplace=True, axis=1)
-    # mydata.drop('Finals', inplace=True, axis=1)
-    # # mydata.drop('Total', inplace=True, axis=1)
-    # mydata.drop('Prize', inplace=True, axis=1)
-    # mydata.drop(mydata.columns[3], inplace=True, axis=1)
-    # mydata.drop(mydata.columns[2], inplace=True, axis=1)
-
-    # names = mydata['Name']
-    # numbers = mydata['PDGA#']
 
 
 def create_connection(db_file):
@@ -70,22 +56,64 @@ def add_score(conn, tournament, score, name):
     conn.commit()
     return cur.lastrowid
 
+def get_users(conn):
+    sql = ' SELECT uname from Users; '
+    cur = conn.cursor()
+    rows = cur.execute(sql).fetchall()
+    names = []
+    for user in rows:
+        names.append(user[0])
+    return names
 
-def main():
-    database = r"C:\Users\eliot\fantasydg\backend\db.db"
+def calculate_user_scores(conn, users, tourney, score_dict):
+    for user in users:
+        picks_sql = ' SELECT player1, player2, player3, player4, player5 FROM ' + user + ' WHERE tournament = "' + tourney + '";'
+        cur = conn.cursor()
+        picks = cur.execute(picks_sql).fetchall()
+        score = 0
+        for player in picks[0]:
+            score += score_dict[player]
+        insert_score_sql = ' UPDATE ' + user + ' SET score = ' + str(score) + ' WHERE tournament = "' + tourney + '";'
+        print(insert_score_sql)
+        cur.execute(insert_score_sql)
+        conn.commit()
 
+def main(tourney, url):
+    database = r"/root/fantasydg/backend/db.db"
+    fantasy_scores = {}
     # create a database connection
     conn = create_connection(database)
     with conn:
-        df = get_data()
+        df = get_data(url)
         names = df['Name']
         scores = df['Total']
         finals = df['Finals']
+        max_made_cut = 0
         for i in range(len(names)):
-            if finals[i] != "":
-                add_score(conn, 'Sample', scores[i], names[i])
-            else: 
-                add_score(conn, 'Sample', str(int(int(scores[i])*5/4)), names[i])
+            try:
+                if finals[i] != "":
+                    if int(scores[i]) > max_made_cut:
+                        max_made_cut = int(scores[i])
+                    add_score(conn, tourney, scores[i], names[i])
+                    fantasy_scores[names[i]] = int(scores[i]) - int(scores[0])
+                else:
+                    to_par = int(scores[i]) - 190
+                    to_par *= 4/3
+                    to_par = 254 + to_par
+                    to_par = max(max_made_cut, int(to_par))
+                    add_score(conn, tourney, str(to_par), names[i])
+                    fantasy_scores[names[i]] = to_par - int(scores[0])
+            except:
+                pass
+        
+        users = get_users(conn)
+        calculate_user_scores(conn, users, tourney, fantasy_scores)
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(description = 'Say hello')
+    parser.add_argument('tourney', help='tourney abbreviation')
+    parser.add_argument('--url', default='https://www.pdga.com/tour/event/64957', help='link to tournament results page')
+    args = parser.parse_args()
+
+    main(args.tourney, args.url)

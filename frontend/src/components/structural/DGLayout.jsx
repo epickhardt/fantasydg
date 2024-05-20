@@ -8,11 +8,12 @@ import DGTourneysContext from "../context/DGTourneysContext";
 import DGTourneyStartsContext from "../context/DGTourneyStartsContext";
 import DGUsersContext from "../context/DGUsersContext";
 import DGScoresContext from "../context/DGScoresContext";
+import DGSumsContext from "../context/DGSumsContext";
 
 function DGLayout(props) {
 
     const [loginStatus, setLoginStatus] = useState(sessionStorage.getItem('username') ? true : false)
-    const [tournaments, setTournaments] = useState(['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
+    const [tournaments, setTournaments] = useState(['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'CHAMP', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
     'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC']);
     const [players, setPlayers] = useState([]);
     const [users, setUsers] = useState([]);
@@ -27,6 +28,7 @@ function DGLayout(props) {
             'TXSTS': new Date("March 29, 2024 06:00:00 GMT"), 
             'JBO': new Date("April 12, 2024 06:00:00 GMT"), 
             'MCO': new Date("April 19, 2024 06:00:00 GMT"), 
+            'CHAMP': new Date("April 25, 2024 06:00:00 GMT"),
             'DDO': new Date("May 3, 2024 06:00:00 GMT"), 
             'OTB': new Date("May 17, 2024 06:00:00 GMT"), 
             'PDXO': new Date("May 30, 2024 06:00:00 GMT"), 
@@ -98,10 +100,10 @@ function DGLayout(props) {
                 let newUserScores = {}
                 data.forEach(tourney => {
                     newUserScores[tourney['tournament']] = tourney['score']
-                    sum += tourney['score']
+                    sum += Number(tourney['score'])
                 })
                 userScores[user] = newUserScores;
-                sums[user] = sum
+                sums[user] = sum;
             })
         })
         setScores(userScores);
@@ -133,7 +135,7 @@ function DGLayout(props) {
                         <Nav.Link as={Link} to="standings">Standings</Nav.Link>
                         <Nav.Link hidden={loginStatus!=true} as={Link} to="picks">Picks</Nav.Link>
                         <Nav.Link hidden={loginStatus===true} as={Link} to="login">Login</Nav.Link>
-                        <Nav.Link hidden={loginStatus===true} as={Link} to="register">Register</Nav.Link>
+                        <Nav.Link hidden={loginStatus===true || true} as={Link} to="register">Register</Nav.Link>
                         <NavDropdown title="Past Tournaments">
                         {
                             pastTourneys.map(tourney => {
@@ -153,7 +155,9 @@ function DGLayout(props) {
                             <DGTourneyStartsContext.Provider value={[tourneyStarts, setTourneyStarts]}>
                                 <DGUsersContext.Provider value={[users, setUsers]}>
                                     <DGScoresContext.Provider value={[scores, setScores]}>
-                                        <Outlet/>
+                                        <DGSumsContext.Provider value={[totals, setTotals]}>
+                                            <Outlet/>
+                                        </DGSumsContext.Provider>
                                     </DGScoresContext.Provider>
                                 </DGUsersContext.Provider>
                             </DGTourneyStartsContext.Provider>

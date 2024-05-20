@@ -4,17 +4,15 @@ import { Link } from "react-router-dom";
 import DGTourneysContext from "../context/DGTourneysContext";
 import DGUsersContext from "../context/DGUsersContext";
 import DGScoresContext from "../context/DGScoresContext";
+import DGSumsContext from "../context/DGSumsContext";
 
 function DGStandings() {
 
     const [users, setUsers] = useContext(DGUsersContext);
     const [tournaments, setTournaments] = useContext(DGTourneysContext);
     const [scores, setScores] = useContext(DGScoresContext);
-    const [totals, setTotals] = useState({});
+    const [sums, setSums] = useContext(DGSumsContext);
 
-    useEffect(() => {
-        setTotals(JSON.parse(sessionStorage.getItem("totals")));
-    }, [])
     return (
         <div>
             <h1>Standings</h1>
@@ -32,10 +30,11 @@ function DGStandings() {
                 { ( Object.keys(scores).length == users.length) ? 
                     <tbody>
                         <tr>
+                            <td>Season Total</td>
                             {
-                                (Object.values(totals).length > 0) ? 
-                                Object.values(totals).map(user => {
-                                    return <td>totals</td>
+                                (Object.values(sums).length > 0) ? 
+                                Object.values(sums).map(user => {
+                                    return <td key={users[Object.values(sums).indexOf(user)]+user}><strong>{user}</strong></td>
                                 }) : <></>
                             }
                         </tr>
@@ -46,7 +45,7 @@ function DGStandings() {
                                     {
                                         Object.values(scores).map(user => {
                                             if (user[tournament]) return <td key={users[Object.values(scores).indexOf(user)] + tournament}>{user[tournament]}</td>
-                                            else return <td>0</td>
+                                            else return <td key={users[Object.values(scores).indexOf(user)] + tournament}>0</td>
                                         })
                                     }
                                 </tr>

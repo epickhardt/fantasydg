@@ -49,7 +49,6 @@ function DGPicks(props) {
         }).then(data => {
             let newSelections = {}
             data.forEach(entry => Object.values(entry).forEach(player => {
-                console.log(player)
                 if (currTourney === player) { setSavedPicks(Object.values(entry).slice(1,6))}
                 if (tourneys.some(tourney => tourney === player) || player === null || !allPlayers.some(aP => aP === player)) {;}
                 else if(!newSelections[player]) newSelections[player] = 1;
@@ -67,6 +66,16 @@ function DGPicks(props) {
         setKeys(Object.keys(newPicks));
     }
 
+    function countOccurrences(arr, item) {
+        let count = 0;
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i] === item) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     const handleSubmit = (tourney, picks) => {
         if(!Object.values(picks).every(pick => pick != "")) {
             alert("Must submit 5 players");
@@ -76,7 +85,8 @@ function DGPicks(props) {
             alert("Duplicate players are not allowed for the same tournament")
             return;
         }
-        if(Object.values(picks).some(pick => prevSelections[pick] >= 3)) {
+        if(Object.values(picks).some(pick => prevSelections[pick] - countOccurrences(savedPicks, pick) >= 3)) {
+
             alert("You have already used a player in your selection 3 times!");
             return;
         }
@@ -113,7 +123,7 @@ function DGPicks(props) {
             <div class="row align-items-start">
                 <div class="col">
                     <h1>Your Picks</h1>
-                    <a target="_blank" href="https://www.pdga.com/tour/event/77759" rel="noreferrer">Open @ Austin PDGA Link</a>
+                    <a target="_blank" href="https://www.pdga.com/tour/event/77762" rel="noreferrer">Music City Open Link</a>
                     <h3>Tournament Select:</h3>
                     <DropdownButton id="dropdown-basic-button" title="Tournament">
                         {
