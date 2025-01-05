@@ -117,8 +117,6 @@ app.post('/api/submitPicks', (req, res) => {
     const REMOVE_EXISTING_PICKS = 'DELETE FROM ' + username + ' WHERE tournament = "' + tourney + '";';
     const INSERT_NEW_PICKS = 'INSERT INTO ' + username + '(tournament, player1, player2, player3, player4, player5)' +
                                 ' VALUES ("' + tourney + '", "' + pick1 + '", "' + pick2 + '", "' + pick3 + '", "' + pick4 + '", "' + pick5 + '");';
-    console.log(REMOVE_EXISTING_PICKS);
-    console.log(INSERT_NEW_PICKS);
     db.serialize(() => {
         db.prepare(REMOVE_EXISTING_PICKS).get((err, ret) => {
             if (err) {

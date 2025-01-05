@@ -63,22 +63,16 @@ def get_users(conn):
     names = []
     for user in rows:
         names.append(user[0])
-    names.remove("Cdpeterson")
-    print(names)
     return names
 
 def calculate_user_scores(conn, users, tourney, score_dict):
     for user in users:
-
         picks_sql = ' SELECT player1, player2, player3, player4, player5 FROM ' + user + ' WHERE tournament = "' + tourney + '";'
         cur = conn.cursor()
         picks = cur.execute(picks_sql).fetchall()
         score = 0
-        if False:
-            pass
-        else:
-            for player in picks[0]:
-                score += score_dict[player]
+        for player in picks[0]:
+            score += score_dict[player]
         insert_score_sql = ' UPDATE ' + user + ' SET score = ' + str(score) + ' WHERE tournament = "' + tourney + '";'
         print(insert_score_sql)
         cur.execute(insert_score_sql)
@@ -103,16 +97,15 @@ def main(tourney, url):
                     add_score(conn, tourney, scores[i], names[i])
                     fantasy_scores[names[i]] = int(scores[i]) - int(scores[0])
                 else:
-                    to_par = int(scores[i]) - 192 # Par thru 3 rounds
-                    to_par *= 4/3 # Extrapolate for 4th rd
-                    to_par = 256 + to_par # Add back total par through 4 rounds
-                    to_par = max(max_made_cut, int(to_par)) # see if better than worst that made cut
+                    to_par = int(scores[i]) - 190
+                    to_par *= 4/3
+                    to_par = 254 + to_par
+                    to_par = max(max_made_cut, int(to_par))
                     add_score(conn, tourney, str(to_par), names[i])
                     fantasy_scores[names[i]] = to_par - int(scores[0])
             except:
-                print(names[i])
-                fantasy_scores[names[i]] = 265 - int(scores[0])  #worst score by selected player
-        # fantasy_scores["Jakub Semerád"] = 265 - int(scores[0]) 
+                pass
+        
         users = get_users(conn)
         calculate_user_scores(conn, users, tourney, fantasy_scores)
 

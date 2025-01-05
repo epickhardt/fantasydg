@@ -4,12 +4,14 @@ import { Link } from "react-router-dom";
 import DGTourneysContext from "../context/DGTourneysContext";
 import DGUsersContext from "../context/DGUsersContext";
 import DGScoresContext from "../context/DGScoresContext";
+import DGSumsContext from "../context/DGSumsContext";
 
 function DGStandings() {
 
     const [users, setUsers] = useContext(DGUsersContext);
     const [tournaments, setTournaments] = useContext(DGTourneysContext);
     const [scores, setScores] = useContext(DGScoresContext);
+    const [sums, setSums] = useContext(DGSumsContext);
 
     return (
         <div>
@@ -19,22 +21,31 @@ function DGStandings() {
                     <tr>
                         <th>Tournament</th>
                         {
-                            users.map(user => {
+                            Object.keys(scores).map(user => {
                                 return <th key={user}>{user}</th>
                             })
                         }
                     </tr>
                 </thead>
-                { (scores.length == users.length) ? 
+                { ( Object.keys(scores).length == users.length) ? 
                     <tbody>
+                        <tr>
+                            <td>Season Total</td>
+                            {
+                                (Object.values(sums).length > 0) ? 
+                                Object.values(sums).map(user => {
+                                    return <td key={users[Object.values(sums).indexOf(user)]+user}><strong>{user}</strong></td>
+                                }) : <></>
+                            }
+                        </tr>
                         {
                             tournaments.map(tournament => {
                                 return <tr key={tournament}>
                                     <td>{tournament}</td>
                                     {
-                                        scores.map(user => {
-                                            if (user[tournament]) return <td>{user[tournament]}</td>
-                                            else return <td>0</td>
+                                        Object.values(scores).map(user => {
+                                            if (user[tournament]) return <td key={users[Object.values(scores).indexOf(user)] + tournament}>{user[tournament]}</td>
+                                            else return <td key={users[Object.values(scores).indexOf(user)] + tournament}>0</td>
                                         })
                                     }
                                 </tr>

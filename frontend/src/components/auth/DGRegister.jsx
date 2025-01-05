@@ -17,6 +17,10 @@ export default function DGRegister() {
         if (username === "" || password === "") {
             alert("You must provide both a username and password!");
         }
+
+        else if (username.includes(' ') || username.includes(';') || username.includes('/') || username.includes('\\')) {
+            alert("Username includes illegal characters (space, slashes, semicolons)");
+        }
         else if (password != confirmPW) {
             alert("Your passwords do not match!")
         }

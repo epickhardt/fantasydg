@@ -27,22 +27,21 @@ export default function DGTournament(props) {
                 alert("Internal Error");
             }
         }).then(data => {
-            console.log(data);
             let newScores = {};
             data.forEach(playerObj => {
-                if(typeof playerObj[props.name] === 'number') {
+                if(typeof playerObj[props.name] === 'number' && !newScores[playerObj["Name"]]) {
                     newScores[playerObj["Name"]] = playerObj[props.name]
                 }
             });
             setScores(newScores);
-            setShownPlayers(Object.keys(newScores));
+            setShownPlayers(new Set(Object.keys(newScores)).keys().toArray());
             setWinning(Math.min(...Object.values(newScores)))
         });
     }, [props.name])
 
     return <>
         <h1>{props.name}</h1>
-        <p>{winning}</p>
+        <p>Winning Score: {winning}</p>
         <a href="httpss://www.pdga.com/tour/event/75422">Link to Tournament Page</a>
         <br/>
         {

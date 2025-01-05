@@ -19,21 +19,9 @@ function FantasyDGApp() {
   const [tourneyStarts, setTourneyStarts] = useContext(DGTourneyStartsContext);
   const [pastTourneys, setPastTourneys] = useState([]);
 
-  const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
+  const tourneys = ['FLO', 'WACO', 'AUSTN', 'TXSTS', 'JBO', 'MCO', 'CHAMP', 'DDO', 'OTB', 'PDXO', 'BSF', 'TPC', 'DMC', 'EO',
   'LSO', 'IDLE', 'WORLDS', 'DGLO', 'GMC', 'MVP', 'USDGC'];
 
-  useEffect(() => {
-    let shownTourneys = []
-    if (tourneyStarts !== undefined) {
-      tourneys.forEach(tourney => {
-        console.log(Date.now())
-        console.log(tourneyStarts[tourney])
-        if (Date.now() > tourneyStarts[tourney]) shownTourneys.push(tourney);
-      })
-      setPastTourneys(shownTourneys);
-    }
-    
-  }, [tourneyStarts])
 
   return (
     <HashRouter>
@@ -47,7 +35,7 @@ function FantasyDGApp() {
           <Route path="/rules" element={<DGRules/>}></Route>
           <Route path="/picks" element={<DGPicks/>}></Route>
           {
-            pastTourneys.map(tourney => {
+            tourneys.map(tourney => {
                           
                 return <Route key={tourney} path={`tournaments/${tourney}`} element={<DGTournament name={tourney} />} />
             })

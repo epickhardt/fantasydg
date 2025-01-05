@@ -7,6 +7,8 @@ function DGRules() {
             <p><strong>*** IT IS YOUR RESPONSIBILITY TO ENSURE THAT THE PLAYERS YOU SELECT ARE PLAYING IN THE EVENT ***</strong></p>
             <p>    If you select someone who doesn't play, they will be replaced by worst player selected by anyone in the league for that tournament</p>
             <p>    For tournaments with cuts/finals: If a selected player doesn't make the cut, their score will be extrapolated for the rounds they didn't play</p>
+            <p>    However, if a player misses the cut, they cannot have a better score than any player who makes the cut for that event</p>
+            <p>    So if their extrapolated score is better than a player who made the cut, they will be given the worse of the two scores</p>
             <p>    The above rules apply for a player who DNFs after completing any full rounds</p>
             <p>    A player who DNFs without completing a full round will be assigned the score of a player of their rating for each round (rounded down)</p>
             <p>    The score each player earns is calculated as follows:  </p>
@@ -15,7 +17,11 @@ function DGRules() {
             <p>    You can only pick each player 3 times throughout the year.  </p>
             <p>    Add up scores each tournament, lowest score over the year wins </p>
             <p>    Tour Championship Format TBD, probably will be a Finals for only the teams with the lowest scores </p>
-            <p>    $25 buy-in, payout sturcture will be determined by the number of players.  </p>
+            <p>    $25 buy-in, payout sturcture will be as follows:  </p>
+            <p>    1st Place: 60% of pot  </p>
+            <p>    2nd Place: 20% of pot  </p>
+            <p>    3rd Place: 10% of pot  </p>
+            <p>    Tour Finale Champion: 10% of pot  </p>
             <p>    Venmo <strong>@EliotPickhardt</strong> or pay cash to secure your spot </p>
             <h4>How to use the website</h4>
             <p>    Register and pay the entry fee to enter the league (the security of the site is undetermined so don't use an important password)</p>
