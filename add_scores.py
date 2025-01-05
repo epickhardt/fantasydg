@@ -49,12 +49,14 @@ def add_score(conn, tournament, score, name):
     """
     Update record with a new tournament score
     """
-    sql = ' UPDATE Players SET ' + tournament + ' = ' + score + ' WHERE Name = "' + name + '";'
     cur = conn.cursor()
+    print(name)
     try:
+        sql = ' UPDATE Players SET ' + tournament + ' = ' + score + ' WHERE Name = "' + name + '";'
         cur.execute(sql)
         conn.commit()
     except:
+        print("Couldn't Add score");
         pass
     return cur.lastrowid
 
@@ -73,8 +75,14 @@ def calculate_user_scores(conn, users, tourney, score_dict):
         cur = conn.cursor()
         picks = cur.execute(picks_sql).fetchall()
         score = 0
+
+        print(picks)
         for player in picks[0]:
-            score += score_dict[player]
+            try:
+                score += score_dict[player]
+            except:
+                score += 34 #INSERT WORST PICKED SCORE HERE
+                print(player)
         insert_score_sql = ' UPDATE ' + user + ' SET score = ' + str(score) + ' WHERE tournament = "' + tourney + '";'
         print(insert_score_sql)
         cur.execute(insert_score_sql)
@@ -82,7 +90,7 @@ def calculate_user_scores(conn, users, tourney, score_dict):
 
 
 def main(tourney, url):
-    database = r"C:\Users\eliot\fantasydg\backend\db.db"
+    database = r"/root/fantasydg/backend/db.db"
 
     fantasy_scores = {}
     # create a database connection
@@ -94,11 +102,12 @@ def main(tourney, url):
         for i in range(len(names)):
             try:
                 fantasy_scores[names[i]] = int(scores[i]) - int(scores[0])
+                add_score(conn, tourney, scores[i], names[i])
+                print(names[i], int(scores[i]) - int(scores[0]))
             except:
-                pass
-            add_score(conn, tourney, scores[i], names[i])
-        users = get_users(conn)
-        calculate_user_scores(conn, users, tourney, fantasy_scores)
+                print(names[i])
+    users = get_users(conn)
+    calculate_user_scores(conn, users, tourney, fantasy_scores)
 
 
 if __name__ == '__main__':
